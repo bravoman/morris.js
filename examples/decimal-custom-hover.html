@@ -1,7 +1,7 @@
 <!doctype html>
 <head>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script src="https://raw.github.com/DmitryBaranovskiy/raphael/300aa589f5a0ba7fce667cd62c7cdda0bd5ad904/raphael-min.js"></script>
+  <script src="../third_party/jquery-1.8.2.min.js"></script>
+  <script src="../third_party/raphael-2.1.0.min.js"></script>
   <script src="../morris.js"></script>
   <script src="lib/prettify.js"></script>
   <script src="lib/example.js"></script>
@@ -27,8 +27,7 @@ window.m = Morris.Line({
   ykeys: ['y'],
   labels: ['sin(x)'],
   parseTime: false,
-  hoverCallback: function (index, options, default_content) {
-    var row = options.data[index];
+  hoverCallback: function (index, options, default_content, row) {
     return default_content.replace("sin(x)", "1.5 + 1.5 sin(" + row.x + ")");
   },
   xLabelMargin: 10,

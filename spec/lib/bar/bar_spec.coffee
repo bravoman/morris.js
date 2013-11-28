@@ -37,9 +37,9 @@ describe 'Morris.Bar', ->
       chart = Morris.Bar $.extend {}, defaults
       $('#graph').find("rect[fill='#0b62a4']").size().should.equal 2
 
-    it 'should have a bar with stroke width 0', ->
+    it 'should have a bar with no stroke', ->
       chart = Morris.Bar $.extend {}, defaults
-      $('#graph').find("rect[stroke-width='0']").size().should.equal 4
+      $('#graph').find("rect[stroke='none']").size().should.equal 4
 
     it 'should have text with configured fill color', ->
       chart = Morris.Bar $.extend {}, defaults
@@ -48,3 +48,23 @@ describe 'Morris.Bar', ->
     it 'should have text with configured font size', ->
       chart = Morris.Bar $.extend {}, defaults
       $('#graph').find("text[font-size='12px']").size().should.equal 7
+
+  describe 'when setting bar radius', ->
+    describe 'svg structure', ->
+      defaults =
+        element: 'graph'
+        data: [{x: 'foo', y: 2, z: 3}, {x: 'bar', y: 4, z: 6}]
+        xkey: 'x'
+        ykeys: ['y', 'z']
+        labels: ['Y', 'Z']
+        barRadius: [5, 5, 0, 0]
+
+      it 'should contain a path for each bar', ->
+        chart = Morris.Bar $.extend {}, defaults
+        $('#graph').find("path").size().should.equal 9
+
+      it 'should use rects if radius is too big', ->
+        delete defaults.barStyle
+        chart = Morris.Bar $.extend {}, defaults,
+            barRadius: [300, 300, 0, 0]
+        $('#graph').find("rect").size().should.equal 4
