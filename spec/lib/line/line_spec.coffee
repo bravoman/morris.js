@@ -64,8 +64,29 @@ describe 'Morris.Line', ->
         labels: ['dontcare']
         dateFormat: (d) ->
           x = new Date(d)
-          "#{x.getYear()}/#{x.getMonth()+1}/#{x.getDay()}"
-      chart.data.map((x) -> x.label).should == ['2012/1/1', '2012/1/2']
+          "#{x.getYear()+1900}/#{x.getMonth()+1}/#{x.getDay()+1}"
+      chart.data.map((x) -> x.label).should.eql(['2012/1/1', '2012/1/2'])
+
+    it 'should use user-defined labels', ->
+      chart = Morris.Line
+        element: 'graph'
+        data: [{x:1,y:2}],
+        xkey: 'x',
+        ykeys: ['y'],
+        labels: ['dontcare']
+        customLabels: [{x:3,label:'label'}]
+      chart.options.customLabels.map((x) -> x.label).should.eql(['label'])
+
+    it 'should use relative x-coordinates', ->
+      chart = Morris.Line
+        element: 'graph'
+        data: [{x:1,y:2}, {x:1.2,y:2}],
+        xkey: 'x',
+        ykeys: ['y'],
+        labels: ['dontcare']
+        parseTime: false
+        freePosition: true
+      [chart.data[1].x - chart.data[0].x].should.not.equal(1) 
 
   describe 'rendering lines', ->
     beforeEach ->
@@ -77,7 +98,6 @@ describe 'Morris.Line', ->
         labels: ['y', 'z']
         lineColors: ['#abcdef', '#fedcba']
         smooth: true
-        continuousLine: false
 
     shouldHavePath = (regex, color = '#abcdef') ->
       # Matches an SVG path element within the rendered chart.
@@ -104,12 +124,7 @@ describe 'Morris.Line', ->
       Morris.Line @defaults
       shouldHavePath /M[\d\.]+,[\d\.]+(C[\d\.]+(,[\d\.]+){5}){3}/
 
-    it 'should ignore null values when options.continuousLine is true', ->
-      @defaults.data[2].y = null
-      Morris.Line $.extend(@defaults, continuousLine: true)
-      shouldHavePath /M[\d\.]+,[\d\.]+(C[\d\.]+(,[\d\.]+){5}){3}/
-
-    it 'should break the line at null values when options.continuousLine is false', ->
+    it 'should break the line at null values', ->
       @defaults.data[2].y = null
       Morris.Line @defaults
       shouldHavePath /(M[\d\.]+,[\d\.]+C[\d\.]+(,[\d\.]+){5}){2}/
